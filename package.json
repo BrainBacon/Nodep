@@ -1,0 +1,33 @@
+{
+  "name": "nodep",
+  "version": "0.1.0",
+  "description": "A lightweight Node.js dependency injection framework",
+  "main": "nodep.js",
+  "scripts": {
+    "test": "gulp test"
+  },
+  "keywords": [
+    "dependency",
+    "dependency management",
+    "dependency injection",
+    "injection",
+    "di",
+    "$di",
+    "framework",
+    "mvc"
+  ],
+  "author": "Brian Jesse (@BrainBacon)",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^3.10.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-jasmine": "^2.0.1",
+    "gulp-jsdoc-to-markdown": "^1.1.1",
+    "gulp-jshint": "^1.11.2",
+    "gulp-load-plugins": "^1.0.0-rc.1",
+    "jasmine": "^2.3.2",
+    "jshint-stylish": "^2.0.1"
+  }
+}
