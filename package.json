@@ -1,8 +1,12 @@
 {
-  "name": "nodep",
+  "name": "Nodep",
   "version": "0.1.0",
   "description": "A lightweight Node.js dependency injection framework",
   "main": "nodep.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/BrainBacon/Nodep.git"
+  },
   "scripts": {
     "test": "gulp test"
   },
@@ -23,6 +27,7 @@
   },
   "devDependencies": {
     "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
     "gulp-jasmine": "^2.0.1",
     "gulp-jsdoc-to-markdown": "^1.1.1",
     "gulp-jshint": "^1.11.2",

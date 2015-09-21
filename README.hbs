@@ -8,11 +8,15 @@ npm install --save nodep
 
 ## Usage
 ``` javascript
-var $di = require('nodep');
-$di.load([
+var $p = require('nodep')();
+$p.load([
     './routes'
 ]);
 ```
+
+## API Reference
+
+{{#module name='nodep'}}{{>docs}}{{/module}} 
 
 ## License
 [The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.html)
