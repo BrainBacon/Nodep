@@ -1,27 +1,105 @@
 # Nodep
-A lightweight dependency injection framework for Node.js.
+[![Build Status](https://travis-ci.org/BrainBacon/Nodep.svg)](https://travis-ci.org/BrainBacon/Nodep)
+[![Coverage Status](https://coveralls.io/repos/BrainBacon/Nodep/badge.svg?branch=master&service=github)](https://coveralls.io/github/BrainBacon/Nodep?branch=master)
 
-[![Travis](https://img.shields.io/travis/BrainBacon/Nodep.svg)]()
-[![Coveralls](https://img.shields.io/coveralls/BrainBacon/Nodep.svg)]()
+A simple dependency injection framework for Node.js inspired by Angular.js.
+
+Inject directly into your exports functions!
+```js
+module.exports = function(myDep) {
+    // do something awesome with myDep
+};
+```
 
 # Installation
-``` bash
-npm install --save nodep
+```bash
+$ npm install --save nodep
 ```
+
+
 
 # Usage
+## Load dependencies into nodep
+Dependencies can be loaded as follows:
+- an array of paths and npm module names
+- a single instance of any of the above
+- an object with the keys being the dependency names
 
+**index.js**
 ```js
 var $p = require('nodep')();
+
 $p.load([
-    './routes'
-]);
+    './a.local.dependency',
+    './another/local.dependency',
+    'anNpmPackage'
+]).load({
+    myVar: localVariable
+});
 ```
+*(Local dependencies are changed to camel-case names without paths)*
+
+Use your dependencies like this:
+
+**a.local.dependency.js**
+```js
+module.exports = function(localDependency, myVar, anNpmPackage) {
+    localDependency.doStuff();
+    myVar.doStuff();
+    anNpmPackage();
+};
+```
+
+Summary:
+- `./a.local.dependency` becomes `aLocalDependency` is executed and injectable
+- `./another/local.dependency` becomes `localDependency` is executed and injectable
+- `anNpmPackage` is loaded from `node_modules`
+- `myVar` is injectable
+
+
+## Existing providers
+register other instances of nodep into your project
+Providers can be loaded as follows:
+- an array of paths, npm module names, or local variables
+- a single instance of any of the above
+
+**index.js**
+```js
+var $p = require('nodep')();
+
+$p.provider([
+    'anNpmPackage',
+    './a.local.provider',
+    aLocalVariable
+]).provider('anotherNpmPackage');
+```
+Now all dependencies from `anNpmPackage`, `aLocalVariable`, and `anotherNpmPackage` are available for injection
+
+
+## Inject dependencies at runtime
+**a.module.loaded.into.nodep.js**
+```js
+// $p is already available for injection
+module.exports = function($p) {
+    var myDependency = $p.inject('myDependency');
+};
+```
+
+
+## Override existing dependencies
+```js
+// You can inject the old instance of this dependency
+$p.decorator('aDependencyToOverride', function(aDependencyToOverride) {
+    var oldDep = aDependencyToOverride;
+});
+```
+
+
+
 
 # API Reference
 <a name="module_nodep"></a>
 ## nodep : <code>function</code>
-
 
 <a name="module_nodep..$p"></a>
 ## nodep~$p : <code>Object</code>
@@ -48,7 +126,7 @@ var $p = require('nodep')();
   * [.camelCase(match, $1, offset)](#module_nodep..$p.camelCase) ⇒ <code>String</code>
   * [.name(path)](#module_nodep..$p.name) ⇒ <code>String</code>
   * [.args(fn)](#module_nodep..$p.args)
-  * [.decorator(name, dependency, skipInject)](#module_nodep..$p.decorator)
+  * [.decorator(name, dependency, [skipInject])](#module_nodep..$p.decorator)
   * [.register(path)](#module_nodep..$p.register)
   * [.load(paths)](#module_nodep..$p.load) ⇒ <code>Object</code>
   * [.provider(instances)](#module_nodep..$p.provider) ⇒ <code>Object</code>
@@ -144,7 +222,7 @@ Will extract the order and name of injectable arguments in a given function
 | fn | <code>function</code> | the function to extract injection arguments from |
 
 <a name="module_nodep..$p.decorator"></a>
-### $p.decorator(name, dependency, skipInject)
+### $p.decorator(name, dependency, [skipInject])
 Main dependency injection function
 
 Dependency Handling:
@@ -168,7 +246,7 @@ Dependency Handling:
 | --- | --- | --- |
 | name | <code>String</code> | the name of a dependency to register to the provider |
 | dependency | <code>?</code> | a value to assign to this dependency |
-| skipInject | <code>Boolean</code> | inject into a provided dependency of type function unless true |
+| [skipInject] | <code>Boolean</code> | inject into a provided dependency of type function unless true |
 
 <a name="module_nodep..$p.register"></a>
 ### $p.register(path)
@@ -183,7 +261,6 @@ Default registration function in front of `$p.decorator`
 <a name="module_nodep..$p.load"></a>
 ### $p.load(paths) ⇒ <code>Object</code>
 Load one or more dependencies into the provider
-
 Loading Mechanism:
  - All strings in an array loaded into $p will be initialized according to `$p.register`
  - Objects will have their members placed directly into $p.dependencies with keys of the same names
@@ -196,16 +273,6 @@ Loading Mechanism:
 | --- | --- | --- |
 | paths | <code>Array.&lt;String&gt;</code> &#124; <code>Object</code> &#124; <code>String</code> | a list, key/value store, or single dependency |
 
-**Example**  
-```js
-$p.load([
-    './example',
-    './foo/bar.js',
-    'baz'
-]).load({
-    bang: require('bang')
-}).load('./grok');
-```
 <a name="module_nodep..$p.provider"></a>
 ### $p.provider(instances) ⇒ <code>Object</code>
 Load an existing instance of nodep into this provider
@@ -217,13 +284,6 @@ Load an existing instance of nodep into this provider
 | --- | --- | --- |
 | instances | <code>Array.&lt;Object&gt;</code> &#124; <code>Object</code> &#124; <code>String</code> | an array of existing provider or single instance |
 
-**Example**  
-```js
-$p.module([
-    require('addon1'),
-    require('addon2')
-]).module(require('addon'));
-```
 <a name="module_nodep..$p.inject"></a>
 ### $p.inject(name) ⇒ <code>?</code>
 Used to programmatically obtain a reference to a dependency
@@ -234,6 +294,7 @@ Used to programmatically obtain a reference to a dependency
 | Param | Type | Description |
 | --- | --- | --- |
 | name | <code>String</code> | The name of the dependency to inject |
+
 
 
 # License

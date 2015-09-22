@@ -1,32 +1,28 @@
 # Nodep
-A lightweight dependency injection framework for Node.js.
+[![Build Status](https://travis-ci.org/BrainBacon/Nodep.svg)](https://travis-ci.org/BrainBacon/Nodep)
+[![Coverage Status](https://coveralls.io/repos/BrainBacon/Nodep/badge.svg?branch=master&service=github)](https://coveralls.io/github/BrainBacon/Nodep?branch=master)
 
-[![Travis](https://img.shields.io/travis/BrainBacon/Nodep.svg)]()
-[![Coveralls](https://img.shields.io/coveralls/BrainBacon/Nodep.svg)]()
+A simple dependency injection framework for Node.js inspired by Angular.js.
 
-# Installation
-``` bash
-npm install --save nodep
+Inject directly into your exports functions!
+```js
+module.exports = function(myDep) {
+    // do something awesome with myDep
+};
 ```
+
+{{#module name="install"~}}{{>body~}}{{/module}}
 
 # Usage
+{{#module name="load"~}}{{>body~}}{{/module}}
+{{#module name="provider"~}}{{>body~}}{{/module}}
+{{#module name="inject"~}}{{>body~}}{{/module}}
+{{#module name="decorator"~}}{{>body~}}{{/module}}
 
-```js
-var $p = require('nodep')();
-$p.load([
-    './routes'
-]);
-```
 
 # API Reference
-{{#module name="nodep"~}}
-{{>header~}}
-{{/module}}
-
-
-{{#identifier longname="module:nodep~$p"~}}
-{{>docs}}
-{{/identifier}}
+{{#module name="nodep"~}}{{>header~}}{{/module}}
+{{#identifier longname="module:nodep~$p"~}}{{>docs}}{{/identifier}}
 
 # License
 [The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.html)

@@ -7,24 +7,27 @@ var REGISTER_TYPE_ERROR_MESSAGE = 'Dependency is not a string';
 var PROVIDER_TYPE_ERROR_MESSAGE = 'Module does not have dependencies';
 
 /**
+ * # Installation
+ * ```bash
+ * $ npm install --save nodep
+ * ```
+ * @module install
+ */
+/**
  * @namespace
  * @module nodep
  * @type {Function}
  * @author Brian Jesse (@BrainBacon)
- * @example
- * ```bash
- * $ npm install --save nodep
- * ```
  */
 module.exports = function() {
 
     /**
      * The dependency injection provider
+     * @type {Object}
      * @example
      * ```js
      * var $p = require('nodep')();
      * ```
-     * @type {Object}
      */
     var $p = {
 
@@ -127,6 +130,16 @@ module.exports = function() {
         },
 
         /**
+         * ## Override existing dependencies
+         * ```js
+         * // You can inject the old instance of this dependency
+         * $p.decorator('aDependencyToOverride', function(aDependencyToOverride) {
+         *     var oldDep = aDependencyToOverride;
+         * });
+         * ```
+         * @module decorator
+         */
+        /**
          * Main dependency injection function
          *
          * Dependency Handling:
@@ -146,7 +159,7 @@ module.exports = function() {
          * @function
          * @param {String} name the name of a dependency to register to the provider
          * @param {?} dependency a value to assign to this dependency
-         * @param {Boolean} skipInject inject into a provided dependency of type function unless true
+         * @param {Boolean} [skipInject] inject into a provided dependency of type function unless true
          */
         decorator: function(name, dependency, skipInject) {
             if(!_.isFunction(dependency) || skipInject) {
@@ -164,6 +177,7 @@ module.exports = function() {
                 }
                 return dep;
             }));
+            return this;
         },
 
         /**
@@ -195,23 +209,51 @@ module.exports = function() {
         },
 
         /**
-         * Load one or more dependencies into the provider
+         * ## Load dependencies into nodep
+         * Dependencies can be loaded as follows:
+         * - an array of paths and npm module names
+         * - a single instance of any of the above
+         * - an object with the keys being the dependency names
          *
+         * **index.js**
+         * ```js
+         * var $p = require('nodep')();
+         *
+         * $p.load([
+         *     './a.local.dependency',
+         *     './another/local.dependency',
+         *     'anNpmPackage'
+         * ]).load({
+         *     myVar: localVariable
+         * });
+         * ```
+         * *(Local dependencies are changed to camel-case names without paths)*
+         *
+         * Use your dependencies like this:
+         *
+         * **a.local.dependency.js**
+         * ```js
+         * module.exports = function(localDependency, myVar, anNpmPackage) {
+         *     localDependency.doStuff();
+         *     myVar.doStuff();
+         *     anNpmPackage();
+         * };
+         * ```
+         *
+         * Summary:
+         * - `./a.local.dependency` becomes `aLocalDependency` is executed and injectable
+         * - `./another/local.dependency` becomes `localDependency` is executed and injectable
+         * - `anNpmPackage` is loaded from `node_modules`
+         * - `myVar` is injectable
+         * @module load
+         */
+        /**
+         * Load one or more dependencies into the provider
          * Loading Mechanism:
          *  - All strings in an array loaded into $p will be initialized according to `$p.register`
          *  - Objects will have their members placed directly into $p.dependencies with keys of the same names
          *  - Strings are treated as a single call to $p.register
          * @function
-         * @example
-         * ```js
-         * $p.load([
-         *     './example',
-         *     './foo/bar.js',
-         *     'baz'
-         * ]).load({
-         *     bang: require('bang')
-         * }).load('./grok');
-         * ```
          * @param {(Array<String>|Object|String)} paths a list, key/value store, or single dependency
          * @returns {Object} a reference to this provider
          */
@@ -241,15 +283,28 @@ module.exports = function() {
         PROVIDER_TYPE_ERROR_MESSAGE: PROVIDER_TYPE_ERROR_MESSAGE,
 
         /**
+         * ## Existing providers
+         * register other instances of nodep into your project
+         * Providers can be loaded as follows:
+         * - an array of paths, npm module names, or local variables
+         * - a single instance of any of the above
+         *
+         * **index.js**
+         * ```js
+         * var $p = require('nodep')();
+         *
+         * $p.provider([
+         *     'anNpmPackage',
+         *     './a.local.provider',
+         *     aLocalVariable
+         * ]).provider('anotherNpmPackage');
+         * ```
+         * Now all dependencies from `anNpmPackage`, `aLocalVariable`, and `anotherNpmPackage` are available for injection
+         * @module provider
+         */
+        /**
          * Load an existing instance of nodep into this provider
          * @function
-         * @example
-         * ```js
-         * $p.module([
-         *     require('addon1'),
-         *     require('addon2')
-         * ]).module(require('addon'));
-         * ```
          * @param {(Array<Object>|Object|String)} instances an array of existing provider or single instance
          * @returns {Object} a reference to this provider
          */
@@ -275,6 +330,17 @@ module.exports = function() {
             return this;
         },
 
+        /**
+         * ## Inject dependencies at runtime
+         * **a.module.loaded.into.nodep.js**
+         * ```js
+         * // $p is already available for injection
+         * module.exports = function($p) {
+         *     var myDependency = $p.inject('myDependency');
+         * };
+         * ```
+         * @module inject
+         */
         /**
          * Used to programmatically obtain a reference to a dependency
          * @function
