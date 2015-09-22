@@ -186,13 +186,14 @@ module.exports = function() {
             this.decorator(name, dependency);
         },
 
-        /*
+        /**
          * Load one or more dependencies into the provider
          *
          * Loading Mechanism:
          *  - All strings in an array loaded into $p will be initialized according to `$p.register`
          *  - Objects will have their members placed directly into $p.dependencies with keys of the same names
          *  - Strings are treated as a single call to $p.register
+         * @function
          * @example
          * ``` javascript
          *     $p.load([
@@ -231,9 +232,9 @@ module.exports = function() {
          */
         PROVIDER_TYPE_ERROR_MESSAGE: PROVIDER_TYPE_ERROR_MESSAGE,
 
-        /*
+        /**
          * Load an existing instance of nodep into this provider
-         *
+         * @function
          * @example
          * ``` javascript
          *     $p.module([
@@ -277,7 +278,7 @@ module.exports = function() {
         },
     };
 
-    /*
+    /**
      * An injectable reference to this module
      * @type {Object}
      */

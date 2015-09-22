@@ -16,12 +16,8 @@ $p.load([
 
 ## API Reference
 
-<a name="module_nodep"></a>
-## nodep
-**Author:** Brian Jesse (@BrainBacon)  
-
 <a name="module_nodep..$p"></a>
-### nodep~$p : <code>Object</code>
+## nodep~$p : <code>Object</code>
 The dependency injection provider
 
 **Kind**: inner property of <code>[nodep](#module_nodep)</code>  
@@ -30,6 +26,7 @@ The dependency injection provider
   * [.dependencies](#module_nodep..$p.dependencies) : <code>Object</code>
   * [.nodep](#module_nodep..$p.nodep) : <code>Object</code>
   * [.module](#module_nodep..$p.module) : <code>Object</code>
+  * [.dependencies.$p](#module_nodep..$p.dependencies.$p) : <code>Object</code>
   * [.CAMEL_CASE_REGEXP](#module_nodep..$p.CAMEL_CASE_REGEXP) : <code>RegExp</code>
   * [.CAMEL_CASE_CLEANUP](#module_nodep..$p.CAMEL_CASE_CLEANUP) : <code>RegExp</code>
   * [.PATH_REPLACE_REGEXP](#module_nodep..$p.PATH_REPLACE_REGEXP) : <code>RegExp</code>
@@ -42,60 +39,67 @@ The dependency injection provider
   * [.args(fn)](#module_nodep..$p.args)
   * [.decorator(name, dependency, skipInject)](#module_nodep..$p.decorator)
   * [.register(path)](#module_nodep..$p.register)
+  * [.load(paths)](#module_nodep..$p.load) ⇒ <code>Object</code>
+  * [.provider(instances)](#module_nodep..$p.provider) ⇒ <code>Object</code>
   * [.inject(name)](#module_nodep..$p.inject) ⇒ <code>?</code>
 
 <a name="module_nodep..$p.dependencies"></a>
-#### $p.dependencies : <code>Object</code>
+### $p.dependencies : <code>Object</code>
 The dependency reference storage object
 
 **Kind**: static property of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.nodep"></a>
-#### $p.nodep : <code>Object</code>
+### $p.nodep : <code>Object</code>
 The package of this library
 
 **Kind**: static property of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.module"></a>
-#### $p.module : <code>Object</code>
+### $p.module : <code>Object</code>
 The module of $p
 
 **Kind**: static property of <code>[$p](#module_nodep..$p)</code>  
+<a name="module_nodep..$p.dependencies.$p"></a>
+### $p.dependencies.$p : <code>Object</code>
+An injectable reference to this module
+
+**Kind**: static property of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.CAMEL_CASE_REGEXP"></a>
-#### $p.CAMEL_CASE_REGEXP : <code>RegExp</code>
+### $p.CAMEL_CASE_REGEXP : <code>RegExp</code>
 Expression used to parse dependency names and format them to camel case
 
 **Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.CAMEL_CASE_CLEANUP"></a>
-#### $p.CAMEL_CASE_CLEANUP : <code>RegExp</code>
+### $p.CAMEL_CASE_CLEANUP : <code>RegExp</code>
 Expression used to clean up trailing characters in a path
 
 **Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.PATH_REPLACE_REGEXP"></a>
-#### $p.PATH_REPLACE_REGEXP : <code>RegExp</code>
+### $p.PATH_REPLACE_REGEXP : <code>RegExp</code>
 Expression to remove path and .js extension when calculating the dependency name
 
 **Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.PATH_REPLACE_RESULT"></a>
-#### $p.PATH_REPLACE_RESULT : <code>String</code>
+### $p.PATH_REPLACE_RESULT : <code>String</code>
 Replace string when evaluating `PATH_REPLACE_REGEXP`
 
 **Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.REMOVE_COMMENTS_REGEXP"></a>
-#### $p.REMOVE_COMMENTS_REGEXP : <code>RegExp</code>
+### $p.REMOVE_COMMENTS_REGEXP : <code>RegExp</code>
 Expression to remove comments when parsing arguments for a dependency
 
 **Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.REGISTER_TYPE_ERROR_MESSAGE"></a>
-#### $p.REGISTER_TYPE_ERROR_MESSAGE : <code>String</code>
+### $p.REGISTER_TYPE_ERROR_MESSAGE : <code>String</code>
 Error message to send when trying to register a non-string type
 
 **Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.PROVIDER_TYPE_ERROR_MESSAGE"></a>
-#### $p.PROVIDER_TYPE_ERROR_MESSAGE : <code>String</code>
+### $p.PROVIDER_TYPE_ERROR_MESSAGE : <code>String</code>
 Error message to send when trying to register a provider without dependencies
 
 **Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.camelCase"></a>
-#### $p.camelCase(match, $1, offset) ⇒ <code>String</code>
+### $p.camelCase(match, $1, offset) ⇒ <code>String</code>
 Used to format text into camel case
 
 **Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
@@ -108,7 +112,7 @@ Used to format text into camel case
 | offset | <code>String</code> | the current index of the match group |
 
 <a name="module_nodep..$p.name"></a>
-#### $p.name(path) ⇒ <code>String</code>
+### $p.name(path) ⇒ <code>String</code>
 Used to format dependency names from filenames
 
 **Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
@@ -119,7 +123,7 @@ Used to format dependency names from filenames
 | path | <code>String</code> | the file path to turn into a dependency name |
 
 <a name="module_nodep..$p.args"></a>
-#### $p.args(fn)
+### $p.args(fn)
 Will extract the order and name of injectable arguments in a given function
 
 **Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
@@ -129,7 +133,7 @@ Will extract the order and name of injectable arguments in a given function
 | fn | <code>function</code> | the function to extract injection arguments from |
 
 <a name="module_nodep..$p.decorator"></a>
-#### $p.decorator(name, dependency, skipInject)
+### $p.decorator(name, dependency, skipInject)
 Main dependency injection function
 
 Dependency Handling:
@@ -156,7 +160,7 @@ Dependency Handling:
 | skipInject | <code>Boolean</code> | inject into a provided dependency of type function unless true |
 
 <a name="module_nodep..$p.register"></a>
-#### $p.register(path)
+### $p.register(path)
 Default registration function in front of `$p.decorator`
 
 **Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
@@ -165,8 +169,52 @@ Default registration function in front of `$p.decorator`
 | --- | --- | --- |
 | path | <code>String</code> | the name or filepath of a dependency to register to the provider |
 
+<a name="module_nodep..$p.load"></a>
+### $p.load(paths) ⇒ <code>Object</code>
+Load one or more dependencies into the provider
+
+Loading Mechanism:
+ - All strings in an array loaded into $p will be initialized according to `$p.register`
+ - Objects will have their members placed directly into $p.dependencies with keys of the same names
+ - Strings are treated as a single call to $p.register
+
+**Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
+**Returns**: <code>Object</code> - a reference to this provider  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| paths | <code>Array.&lt;String&gt;</code> &#124; <code>Object</code> &#124; <code>String</code> | a list, key/value store, or single dependency |
+
+**Example**  
+``` javascript
+    $p.load([
+        './example',
+        './foo/bar.js',
+        'baz'
+    ]).load({
+        bang: require('bang')
+    }).load('./grok');
+```
+<a name="module_nodep..$p.provider"></a>
+### $p.provider(instances) ⇒ <code>Object</code>
+Load an existing instance of nodep into this provider
+
+**Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
+**Returns**: <code>Object</code> - a reference to this provider  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| instances | <code>Array.&lt;Object&gt;</code> &#124; <code>Object</code> &#124; <code>String</code> | an array of existing provider or single instance |
+
+**Example**  
+``` javascript
+    $p.module([
+        require('addon1'),
+        require('addon2')
+    ]).module(require('addon'));
+```
 <a name="module_nodep..$p.inject"></a>
-#### $p.inject(name) ⇒ <code>?</code>
+### $p.inject(name) ⇒ <code>?</code>
 Used to programmatically obtain a reference to a dependency
 
 **Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
@@ -176,7 +224,6 @@ Used to programmatically obtain a reference to a dependency
 | --- | --- | --- |
 | name | <code>String</code> | The name of the dependency to inject |
 
- 
 
 ## License
 [The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.html)

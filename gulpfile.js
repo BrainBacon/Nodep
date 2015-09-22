@@ -25,3 +25,6 @@ gulp.task('docs', function() {
             template: fs.readFileSync('./README.hbs', 'utf8')
         })).pipe(gulp.dest('.'));
 });
+
+gulp.task('default', ['test']);
+
