@@ -274,6 +274,7 @@ module.exports = function() {
          * - an array of strings of local dependency paths and npm module names
          * - a single string of a local dependency path or npm module name
          * - an object with the keys being the dependency names
+         *
          * ### Notes
          * - Local dependencies of type function will be executed and will have arguments injected into them
          * - Local dependencies of other types, e.g. Strings or Objects, will be injected as-is
