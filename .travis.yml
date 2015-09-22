@@ -2,4 +2,5 @@ sudo: false
 language: node_js
 node_js: stable
 before_script: npm install -g gulp
+after_script: gulp coverage
 script: gulp

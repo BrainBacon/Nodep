@@ -9,8 +9,14 @@ gulp.task('jshint', function() {
 });
 
 gulp.task('spec', function() {
-    gulp.src('test/spec.js')
-        .pipe(gp.mocha());
+    gulp.src('nodep.js')
+        .pipe(gp.istanbul())
+        .pipe(gp.istanbul.hookRequire())
+        .on('finish', function() {
+            gulp.src('test/spec.js')
+                .pipe(gp.mocha())
+                .pipe(gp.istanbul.writeReports());
+        });
 });
 
 gulp.task('test', [
@@ -24,6 +30,11 @@ gulp.task('docs', function() {
         .pipe(gp.jsdocToMarkdown({
             template: fs.readFileSync('./docs.hbs', 'utf8')
         })).pipe(gulp.dest('.'));
+});
+
+gulp.task('coverage', function()  {
+    gulp.src('coverage/**/lcov.info')
+        .pipe(gp.coveralls());
 });
 
 gulp.task('default', ['test']);
