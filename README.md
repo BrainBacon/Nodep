@@ -1,5 +1,4 @@
 # Nodep
----
 A lightweight dependency injection framework for Node.js.
 
 [![Travis](https://img.shields.io/travis/BrainBacon/Nodep.svg)]()
@@ -19,7 +18,6 @@ $p.load([
 ```
 
 # API Reference
---
 <a name="module_nodep"></a>
 ## nodep : <code>function</code>
 
