@@ -1,0 +1,6 @@
+.npmignore
+.jshintrc
+.travis.yml
+gulpfile.js
+docs.hbs
+test

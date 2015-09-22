@@ -10,7 +10,7 @@ gulp.task('jshint', function() {
 
 gulp.task('spec', function() {
     gulp.src('test/spec.js')
-        .pipe(gp.jasmine());
+        .pipe(gp.mocha());
 });
 
 gulp.task('test', [
@@ -22,7 +22,7 @@ gulp.task('docs', function() {
     gulp.src('nodep.js')
         .pipe(gp.concat('README.md'))
         .pipe(gp.jsdocToMarkdown({
-            template: fs.readFileSync('./README.hbs', 'utf8')
+            template: fs.readFileSync('./docs.hbs', 'utf8')
         })).pipe(gulp.dest('.'));
 });
 

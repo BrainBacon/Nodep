@@ -1,4 +1,4 @@
 {
     "node": true,
-    "jasmine": true
+    "mocha": true
 }

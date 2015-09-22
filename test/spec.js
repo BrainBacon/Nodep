@@ -1,5 +1,6 @@
 'use strict';
 
+var assert = require('assert');
 var _ = require('lodash');
 
 var nodep = require('../nodep');
@@ -17,41 +18,41 @@ var obj = require('./mock/obj');
 
 describe('$p', function() {
     it('should register itself', function() {
-        expect($p.dependencies.$p).toBe($p);
+        assert.equal($p.dependencies.$p,$p);
     });
 });
 
 describe('$p.name', function() {
     it('should camelcase paths', function() {
-        expect($p.name('./foo.bar1.js')).toBe('fooBar1');
-        expect($p.name('./foo/foo-bar2')).toBe('fooBar2');
-        expect($p.name('./foo/bar/foo_bar3.js')).toBe('fooBar3');
-        expect($p.name('./.foo/fooBar4')).toBe('fooBar4');
-        expect($p.name('/foo-._bar5.js')).toBe('fooBar5');
-        expect($p.name('/-._fooBar6')).toBe('fooBar6');
-        expect($p.name('/fooBar7-_..js')).toBe('fooBar7');
+        assert.equal($p.name('./foo.bar1.js'), 'fooBar1');
+        assert.equal($p.name('./foo/foo-bar2'), 'fooBar2');
+        assert.equal($p.name('./foo/bar/foo_bar3.js'), 'fooBar3');
+        assert.equal($p.name('./.foo/fooBar4'), 'fooBar4');
+        assert.equal($p.name('/foo-._bar5.js'), 'fooBar5');
+        assert.equal($p.name('/-._fooBar6'), 'fooBar6');
+        assert.equal($p.name('/fooBar7-_..js'), 'fooBar7');
     });
 });
 
 describe('$p.args', function() {
     it('should find no arguments', function() {
-        expect($p.args(noArgs)).toEqual([]);
+        assert.deepEqual($p.args(noArgs), []);
     });
 
     it('should find no arguments from commented function', function() {
-        expect($p.args(noArgsCommented)).toEqual([]);
+        assert.deepEqual($p.args(noArgsCommented), []);
     });
 
     it('should find one argument', function() {
-        expect($p.args(arg)).toEqual(['noArgs']);
+        assert.deepEqual($p.args(arg), ['noArgs']);
     });
 
     it('should find one argument from commented function', function() {
-        expect($p.args(argCommented)).toEqual(['noArgs']);
+        assert.deepEqual($p.args(argCommented), ['noArgs']);
     });
 
     it('should find arguments', function() {
-        expect($p.args(args)).toEqual([
+        assert.deepEqual($p.args(args), [
             'noArgs',
             'noArgsCommented',
             'arg',
@@ -60,7 +61,7 @@ describe('$p.args', function() {
     });
 
     it('should find arguments from commented function', function() {
-        expect($p.args(argsCommented)).toEqual([
+        assert.deepEqual($p.args(argsCommented), [
             'noArgs',
             'noArgsCommented',
             'arg',
@@ -82,7 +83,7 @@ describe('$p.decorator', function() {
             return 'bar';
         };
         $p.decorator('foo', foo);
-        expect($p.dependencies.foo).toEqual(foo());
+        assert.equal($p.dependencies.foo, foo());
     });
 
     it('should create and not apply dependency', function() {
@@ -90,12 +91,12 @@ describe('$p.decorator', function() {
             return 'bar';
         };
         $p.decorator('foo', foo, true);
-        expect($p.dependencies.foo).toEqual(foo);
+        assert.equal($p.dependencies.foo, foo);
     });
 
     it('should create dependency string', function() {
         $p.decorator('foo', 'bar');
-        expect($p.dependencies.foo).toBe('bar');
+        assert.equal($p.dependencies.foo, 'bar');
     });
 
     it('should create dependency object', function() {
@@ -103,18 +104,18 @@ describe('$p.decorator', function() {
             bar: true
         };
         $p.decorator('foo', foo);
-        expect($p.dependencies.foo).toEqual(foo);
+        assert.equal($p.dependencies.foo, foo);
     });
 
     it('should create dependency number', function() {
         $p.decorator('foo', 13);
-        expect($p.dependencies.foo).toBe(13);
+        assert.equal($p.dependencies.foo, 13);
     });
 
     it('should overwrite dependency', function() {
         $p.decorator('foo', 17);
         $p.decorator('foo', 19);
-        expect($p.dependencies.foo).toBe(19);
+        assert.equal($p.dependencies.foo, 19);
     });
 
     it('should overwrite and inject dependency', function() {
@@ -123,7 +124,7 @@ describe('$p.decorator', function() {
         $p.decorator('foo', function(bar) {
             return 31 * bar;
         });
-        expect($p.dependencies.foo).toBe(899);
+        assert.equal($p.dependencies.foo, 899);
     });
 
     it('should overwrite and inject old dependency', function() {
@@ -131,7 +132,7 @@ describe('$p.decorator', function() {
         $p.decorator('foo', function(foo) {
             return 41 * foo;
         });
-        expect($p.dependencies.foo).toBe(1517);
+        assert.equal($p.dependencies.foo, 1517);
     });
 });
 
@@ -140,56 +141,56 @@ describe('$p.register', function() {
 
     it('should register npm module', function() {
         $p.register('lodash');
-        expect($p.dependencies.lodash).toEqual(_);
+        assert.equal($p.dependencies.lodash, _);
     });
 
     it('should register string', function() {
         $p.register('./mock/str');
-        expect($p.dependencies.str).toBe(str);
+        assert.equal($p.dependencies.str, str);
     });
 
     it('should register number', function() {
         $p.register('./mock/num');
-        expect($p.dependencies.num).toBe(num);
+        assert.equal($p.dependencies.num, num);
     });
 
     it('should register object', function() {
         $p.register('./mock/obj');
-        expect($p.dependencies.obj).toEqual(obj);
+        assert.equal($p.dependencies.obj, obj);
     });
 
     it('should throw error for undefined', function() {
-        expect($p.register).toThrowError(TypeError, $p.REGISTER_TYPE_ERROR_MESSAGE);
+        assert.throws($p.register, TypeError, $p.REGISTER_TYPE_ERROR_MESSAGE);
     });
 
     it('should throw error for non-existent dependency', function() {
-        expect(function() {
+        assert.throws(function() {
             $p.register('./nope');
-        }).toThrowError(Error, 'Cannot find module \'./nope\'');
+        }, Error, 'Cannot find module \'./nope\'');
     });
 
     it('should throw error for non-existent npm module', function() {
-        expect(function() {
+        assert.throws(function() {
             $p.register('nope');
-        }).toThrowError(Error, 'Cannot find module \'nope\'');
+        }, Error, 'Cannot find module \'nope\'');
     });
 
     it('should not overwrite existing dependency', function() {
         $p.register('./mock/random');
         var first = $p.dependencies.random;
         $p.register('./mock/random');
-        expect($p.dependencies.random).toBe(first);
+        assert.equal($p.dependencies.random, first);
     });
 
     it('should find new npm module', function() {
         $p.register('./mock/npm');
-        expect($p.dependencies.npm).toEqual(_);
+        assert.equal($p.dependencies.npm, _);
     });
 
     it('should inject dependency', function() {
         $p.register('./mock/no.args');
         $p.register('./mock/arg');
-        expect($p.dependencies.arg).toBe(3);
+        assert.equal($p.dependencies.arg, 3);
     });
 
     it('should inject dependencies', function() {
@@ -199,7 +200,7 @@ describe('$p.register', function() {
         $p.register('./mock/arg.commented');
         $p.register('./mock/args');
         $p.register('./mock/args.commented');
-        expect($p.dependencies.argsCommented).toBe(69300);
+        assert.equal($p.dependencies.argsCommented, 69300);
     });
 });
 
@@ -208,7 +209,7 @@ describe('$p.load', function() {
 
     it('should register dependency', function() {
         $p.load('./mock/no.args');
-        expect($p.dependencies.noArgs).toBe(1);
+        assert.equal($p.dependencies.noArgs, 1);
     });
 
     it('should register dependency array', function() {
@@ -216,22 +217,22 @@ describe('$p.load', function() {
             './mock/no.args',
             './mock/no.args.commented'
         ]);
-        expect($p.dependencies.noArgs).toBe(1);
-        expect($p.dependencies.noArgsCommented).toBe(2);
+        assert.equal($p.dependencies.noArgs, 1);
+        assert.equal($p.dependencies.noArgsCommented, 2);
     });
 
     it('should register dependency object', function() {
         $p.load({
             foo: 'bar'
         });
-        expect($p.dependencies.foo).toBe('bar');
+        assert.equal($p.dependencies.foo, 'bar');
     });
 
     it('should not overwrite dependency from array', function() {
         $p.load(['./mock/random']);
         var first = $p.dependencies.random;
         $p.load(['./mock/random']);
-        expect($p.dependencies.random).toBe(first);
+        assert.equal($p.dependencies.random, first);
     });
 
     it('should not overwrite dependency from object', function() {
@@ -241,15 +242,15 @@ describe('$p.load', function() {
         $p.load({
             foo: 'baz'
         });
-        expect($p.dependencies.foo).toBe('bar');
+        assert.equal($p.dependencies.foo, 'bar');
     });
 
     it('should return $p', function() {
-        expect($p.load({
+        assert.equal($p.load({
             foo: 'bar'
         }).load([
             './mock/num'
-        ])).toEqual($p);
+        ]), $p);
     });
 });
 
@@ -260,7 +261,7 @@ describe('$p.provider', function() {
         $p.provider(nodep().load({
             foo: true
         }));
-        expect($p.dependencies.foo).toBe(true);
+        assert.equal($p.dependencies.foo, true);
     });
 
     it('should register other provider function', function() {
@@ -269,7 +270,7 @@ describe('$p.provider', function() {
                 foo: true
             });
         });
-        expect($p.dependencies.foo).toBe(true);
+        assert.equal($p.dependencies.foo, true);
     });
 
     it('should register other provider array', function() {
@@ -281,26 +282,26 @@ describe('$p.provider', function() {
                 bar: true
             })
         ]);
-        expect($p.dependencies.foo).toBe(true);
-        expect($p.dependencies.bar).toBe(true);
+        assert.equal($p.dependencies.foo, true);
+        assert.equal($p.dependencies.bar, true);
     });
 
     it('should register other provider string function', function() {
         $p.provider('./mock/provider');
-        expect($p.dependencies.foo).toBe(true);
+        assert.equal($p.dependencies.foo, true);
     });
 
     it('should register other provider string object', function() {
         $p.provider('./mock/provider.obj');
-        expect($p.dependencies.foo).toBe(true);
+        assert.equal($p.dependencies.foo, true);
     });
 
     it('should error on invalid provider', function() {
-        expect($p.provider).toThrowError(TypeError, $p.PROVIDER_TYPE_ERROR_MESSAGE);
+        assert.throws($p.provider, TypeError, $p.PROVIDER_TYPE_ERROR_MESSAGE);
     });
 
     it('should return $p', function() {
-        expect($p.provider(nodep())).toBe($p);
+        assert.equal($p.provider(nodep()), $p);
     });
 });
 
@@ -308,15 +309,15 @@ describe('$p.inject', function() {
     beforeEach(reset);
 
     it('should return a reference to $p', function() {
-        expect($p.inject('$p')).toBe($p);
+        assert.equal($p.inject('$p'), $p);
     });
 
     it('should return a reference to dependency', function() {
         $p.decorator('foo', 'bar');
-        expect($p.inject('foo')).toBe('bar');
+        assert.equal($p.inject('foo'), 'bar');
     });
 
     it('should return an undefined reference', function() {
-        expect($p.inject('foo')).toBe(undefined);
+        assert.equal($p.inject('foo'), undefined);
     });
 });
