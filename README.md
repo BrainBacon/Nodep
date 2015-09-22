@@ -10,15 +10,13 @@ module.exports = function(myDep) {
     // do something awesome with myDep
 };
 ```
-
 # Installation
 ```bash
 $ npm install --save nodep
 ```
-
-
-
 # Usage
+
+
 ## Load dependencies into nodep
 Dependencies can be loaded as follows:
 - an array of paths and npm module names
@@ -93,8 +91,6 @@ $p.decorator('aDependencyToOverride', function(aDependencyToOverride) {
     var oldDep = aDependencyToOverride;
 });
 ```
-
-
 
 
 # API Reference
@@ -296,7 +292,6 @@ Used to programmatically obtain a reference to a dependency
 | name | <code>String</code> | The name of the dependency to inject |
 
 
-
 # License
 [The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.html)
 
@@ -319,3 +314,5 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+
