@@ -20,7 +20,7 @@
     "framework",
     "mvc"
   ],
-  "author": "Brian Jesse (@BrainBacon)",
+  "author": "Brian Jesse <brian.jesse@gmail.com> (http://brianjesse.com)",
   "license": "MIT",
   "dependencies": {
     "lodash": "^3.10.1"
