@@ -27,6 +27,7 @@ $ npm install --save nodep
 - Local dependencies of type function will be executed and will have arguments injected into them
 - Local dependencies of other types, e.g. Strings or Objects, will be injected as-is
 - Local dependencies are changed to camel-case names without paths
+
 ### Example
 **index.js**
 ```js
@@ -63,6 +64,7 @@ Register other instances of nodep into your project.
 - an array of paths, npm module names, or local variables
 - a single instance of any of the above
 
+### Example
 **index.js**
 ```js
 var $p = require('nodep')();
