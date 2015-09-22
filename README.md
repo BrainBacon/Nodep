@@ -145,7 +145,7 @@ var $p = require('nodep')();
   * [.camelCase(match, $1, offset)](#module_nodep..$p.camelCase) ⇒ <code>String</code>
   * [.name(path)](#module_nodep..$p.name) ⇒ <code>String</code>
   * [.args(fn)](#module_nodep..$p.args)
-  * [.decorator(name, dependency, [skipInject])](#module_nodep..$p.decorator)
+  * [.decorator(name, dependency, [skipInject])](#module_nodep..$p.decorator) ⇒ <code>Object</code>
   * [.register(path)](#module_nodep..$p.register)
   * [.load(paths)](#module_nodep..$p.load) ⇒ <code>Object</code>
   * [.provider(instances)](#module_nodep..$p.provider) ⇒ <code>Object</code>
@@ -241,7 +241,7 @@ Will extract the order and name of injectable arguments in a given function
 | fn | <code>function</code> | the function to extract injection arguments from |
 
 <a name="module_nodep..$p.decorator"></a>
-### $p.decorator(name, dependency, [skipInject])
+### $p.decorator(name, dependency, [skipInject]) ⇒ <code>Object</code>
 Main dependency injection function
 
 Dependency Handling:
@@ -260,6 +260,7 @@ Dependency Handling:
    - Will not be initialized in the same manner as local dependencies
 
 **Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
+**Returns**: <code>Object</code> - a reference to this provider  
 
 | Param | Type | Description |
 | --- | --- | --- |

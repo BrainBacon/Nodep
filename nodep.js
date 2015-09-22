@@ -220,6 +220,7 @@ module.exports = function() {
          * @param {String} name the name of a dependency to register to the provider
          * @param {?} dependency a value to assign to this dependency
          * @param {Boolean} [skipInject] inject into a provided dependency of type function unless true
+         * @returns {Object} a reference to this provider
          */
         decorator: function(name, dependency, skipInject) {
             if(!_.isFunction(dependency) || skipInject) {
