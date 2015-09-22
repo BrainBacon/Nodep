@@ -56,7 +56,8 @@ Summary:
 
 
 ## Existing providers
-register other instances of nodep into your project
+Register other instances of nodep into your project.
+
 Providers can be loaded as follows:
 - an array of paths, npm module names, or local variables
 - a single instance of any of the above
@@ -71,7 +72,7 @@ $p.provider([
     aLocalVariable
 ]).provider('anotherNpmPackage');
 ```
-Now all dependencies from `anNpmPackage`, `aLocalVariable`, and `anotherNpmPackage` are available for injection
+Now all dependencies from `anNpmPackage`, `aLocalVariable`, and `anotherNpmPackage` are available for injection.
 
 
 ## Inject dependencies at runtime
@@ -91,6 +92,27 @@ $p.decorator('aDependencyToOverride', function(aDependencyToOverride) {
     var oldDep = aDependencyToOverride;
 });
 ```
+
+
+# Contributing
+## Requirements
+[Gulp](http://gulpjs.com/)
+```bash
+$ npm install -g gulp
+```
+## Running the test suite
+```bash
+$ gulp
+```
+## Generating README.md
+```bash
+$ gulp docs
+```
+Note:
+- jshint is part of the test suite and should be kept clean
+- Pull requests should have high test coverage
+- Docs should be kept up to date
+- Additions should come with documentation
 
 
 # API Reference

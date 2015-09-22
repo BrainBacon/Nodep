@@ -32,6 +32,28 @@ var REGISTER_TYPE_ERROR_MESSAGE = 'Dependency is not a string';
 var PROVIDER_TYPE_ERROR_MESSAGE = 'Module does not have dependencies';
 
 /**
+ * # Contributing
+ * ## Requirements
+ * [Gulp](http://gulpjs.com/)
+ * ```bash
+ * $ npm install -g gulp
+ * ```
+ * ## Running the test suite
+ * ```bash
+ * $ gulp
+ * ```
+ * ## Generating README.md
+ * ```bash
+ * $ gulp docs
+ * ```
+ * Note:
+ * - jshint is part of the test suite and should be kept clean
+ * - Pull requests should have high test coverage
+ * - Docs should be kept up to date
+ * - Additions should come with documentation
+ * @module contributing
+ */
+/**
  * # Nodep
  * [![Build Status](https://travis-ci.org/BrainBacon/Nodep.svg)](https://travis-ci.org/BrainBacon/Nodep)
  * [![Coverage Status](https://coveralls.io/repos/BrainBacon/Nodep/badge.svg?branch=master&service=github)](https://coveralls.io/github/BrainBacon/Nodep?branch=master)
@@ -322,7 +344,8 @@ module.exports = function() {
 
         /**
          * ## Existing providers
-         * register other instances of nodep into your project
+         * Register other instances of nodep into your project.
+         *
          * Providers can be loaded as follows:
          * - an array of paths, npm module names, or local variables
          * - a single instance of any of the above
@@ -337,7 +360,7 @@ module.exports = function() {
          *     aLocalVariable
          * ]).provider('anotherNpmPackage');
          * ```
-         * Now all dependencies from `anNpmPackage`, `aLocalVariable`, and `anotherNpmPackage` are available for injection
+         * Now all dependencies from `anNpmPackage`, `aLocalVariable`, and `anotherNpmPackage` are available for injection.
          * @module provider
          */
         /**
