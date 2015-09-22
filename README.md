@@ -2,6 +2,7 @@
 A lightweight dependency injection framework for Node.js.
 
 [![Travis](https://img.shields.io/travis/BrainBacon/Nodep.svg)]()
+[![Coveralls](https://img.shields.io/coveralls/BrainBacon/Nodep.svg)]()
 
 # Installation
 ``` bash
