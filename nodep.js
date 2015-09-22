@@ -46,7 +46,7 @@ var PROVIDER_TYPE_ERROR_MESSAGE = 'Module does not have dependencies';
  * ```bash
  * $ gulp docs
  * ```
- * Note:
+ * ## Notes
  * - jshint is part of the test suite and should be kept clean
  * - Pull requests should have high test coverage
  * - Docs should be kept up to date
