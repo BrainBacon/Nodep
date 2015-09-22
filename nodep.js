@@ -9,13 +9,21 @@ var PROVIDER_TYPE_ERROR_MESSAGE = 'Module does not have dependencies';
 /**
  * @namespace
  * @module nodep
- * @type {Object}
+ * @type {Function}
  * @author Brian Jesse (@BrainBacon)
+ * @example
+ * ```bash
+ * $ npm install --save nodep
+ * ```
  */
 module.exports = function() {
 
     /**
      * The dependency injection provider
+     * @example
+     * ```js
+     * var $p = require('nodep')();
+     * ```
      * @type {Object}
      */
     var $p = {
@@ -195,14 +203,14 @@ module.exports = function() {
          *  - Strings are treated as a single call to $p.register
          * @function
          * @example
-         * ``` javascript
-         *     $p.load([
-         *         './example',
-         *         './foo/bar.js',
-         *         'baz'
-         *     ]).load({
-         *         bang: require('bang')
-         *     }).load('./grok');
+         * ```js
+         * $p.load([
+         *     './example',
+         *     './foo/bar.js',
+         *     'baz'
+         * ]).load({
+         *     bang: require('bang')
+         * }).load('./grok');
          * ```
          * @param {(Array<String>|Object|String)} paths a list, key/value store, or single dependency
          * @returns {Object} a reference to this provider
@@ -236,11 +244,11 @@ module.exports = function() {
          * Load an existing instance of nodep into this provider
          * @function
          * @example
-         * ``` javascript
-         *     $p.module([
-         *         require('addon1'),
-         *         require('addon2')
-         *     ]).module(require('addon'));
+         * ```js
+         * $p.module([
+         *     require('addon1'),
+         *     require('addon2')
+         * ]).module(require('addon'));
          * ```
          * @param {(Array<Object>|Object|String)} instances an array of existing provider or single instance
          * @returns {Object} a reference to this provider

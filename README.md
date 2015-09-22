@@ -1,26 +1,36 @@
 # Nodep
+---
 A lightweight dependency injection framework for Node.js.
 
-## Installation
+# Installation
 ``` bash
 npm install --save nodep
 ```
 
-## Usage
-``` javascript
+# Usage
+
+```js
 var $p = require('nodep')();
 $p.load([
     './routes'
 ]);
 ```
 
-## API Reference
+# API Reference
+--
+<a name="module_nodep"></a>
+## nodep : <code>function</code>
+
 
 <a name="module_nodep..$p"></a>
 ## nodep~$p : <code>Object</code>
 The dependency injection provider
 
 **Kind**: inner property of <code>[nodep](#module_nodep)</code>  
+**Example**  
+```js
+var $p = require('nodep')();
+```
 
 * [~$p](#module_nodep..$p) : <code>Object</code>
   * [.dependencies](#module_nodep..$p.dependencies) : <code>Object</code>
@@ -186,14 +196,14 @@ Loading Mechanism:
 | paths | <code>Array.&lt;String&gt;</code> &#124; <code>Object</code> &#124; <code>String</code> | a list, key/value store, or single dependency |
 
 **Example**  
-``` javascript
-    $p.load([
-        './example',
-        './foo/bar.js',
-        'baz'
-    ]).load({
-        bang: require('bang')
-    }).load('./grok');
+```js
+$p.load([
+    './example',
+    './foo/bar.js',
+    'baz'
+]).load({
+    bang: require('bang')
+}).load('./grok');
 ```
 <a name="module_nodep..$p.provider"></a>
 ### $p.provider(instances) ⇒ <code>Object</code>
@@ -207,11 +217,11 @@ Load an existing instance of nodep into this provider
 | instances | <code>Array.&lt;Object&gt;</code> &#124; <code>Object</code> &#124; <code>String</code> | an array of existing provider or single instance |
 
 **Example**  
-``` javascript
-    $p.module([
-        require('addon1'),
-        require('addon2')
-    ]).module(require('addon'));
+```js
+$p.module([
+    require('addon1'),
+    require('addon2')
+]).module(require('addon'));
 ```
 <a name="module_nodep..$p.inject"></a>
 ### $p.inject(name) ⇒ <code>?</code>
@@ -225,7 +235,7 @@ Used to programmatically obtain a reference to a dependency
 | name | <code>String</code> | The name of the dependency to inject |
 
 
-## License
+# License
 [The MIT License (MIT)](http://www.opensource.org/licenses/mit-license.html)
 
 Copyright (c) 2015 Brian Jesse
