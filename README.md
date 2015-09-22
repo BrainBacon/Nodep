@@ -18,25 +18,27 @@ $ npm install --save nodep
 
 
 ## Load dependencies into nodep
-Dependencies can be loaded as follows:
-- an array of paths and npm module names
-- a single instance of any of the above
+### Dependencies can be loaded as follows:
+- an array of strings of local dependency paths and npm module names
+- a single string of a local dependency path or npm module name
 - an object with the keys being the dependency names
-
+### Notes
+- Local dependencies of type function will be executed and will have arguments injected into them
+- Local dependencies of other types, e.g. Strings or Objects, will be injected as-is
+- Local dependencies are changed to camel-case names without paths
+### Example
 **index.js**
 ```js
 var $p = require('nodep')();
 
-$p.load([
-    './a.local.dependency',
-    './another/local.dependency',
-    'anNpmPackage'
-]).load({
+$p.load({
     myVar: localVariable
-});
+}).load([
+    'anNpmPackage',
+    './a/nested/local.dependency',
+    './a.local.dependency'
+]);
 ```
-*(Local dependencies are changed to camel-case names without paths)*
-
 Use your dependencies like this:
 
 **a.local.dependency.js**
@@ -47,18 +49,16 @@ module.exports = function(localDependency, myVar, anNpmPackage) {
     anNpmPackage();
 };
 ```
-
-Summary:
-- `./a.local.dependency` becomes `aLocalDependency` is executed and injectable
-- `./another/local.dependency` becomes `localDependency` is executed and injectable
+- `./a/nested/local.dependency` becomes `localDependency` is executed and injectable
 - `anNpmPackage` is loaded from `node_modules`
 - `myVar` is injectable
+- `./a.local.dependency` becomes `aLocalDependency` is executed and injectable
 
 
 ## Existing providers
 Register other instances of nodep into your project.
 
-Providers can be loaded as follows:
+### Providers can be loaded as follows:
 - an array of paths, npm module names, or local variables
 - a single instance of any of the above
 
@@ -72,7 +72,7 @@ $p.provider([
     aLocalVariable
 ]).provider('anotherNpmPackage');
 ```
-Now all dependencies from `anNpmPackage`, `aLocalVariable`, and `anotherNpmPackage` are available for injection.
+- Now all dependencies from `anNpmPackage`, `aLocalVariable`, and `anotherNpmPackage` are available for injection.
 
 
 ## Inject dependencies at runtime
