@@ -4,3 +4,4 @@
 gulpfile.js
 docs.hbs
 test
+coverage
