@@ -1,5 +1,32 @@
 'use strict';
 
+/**
+ * # Contributing
+ * ## Requirements
+ * - [Gulp](http://gulpjs.com/)
+ * ```bash
+ * $ npm install -g gulp
+ * ```
+ * ## Running the test suite
+ * ### Single Run:
+ * ```bash
+ * $ gulp
+ * ```
+ * ### Continuous testing when files are changed:
+ * ```bash
+ * $ gulp autotest
+ * ```
+ * ## Generating README.md
+ * ```bash
+ * $ gulp docs
+ * ```
+ * ## Notes
+ * - jshint is part of the test suite and should be kept clean
+ * - Pull requests should have high test coverage
+ * - Docs should be kept up to date
+ * - Additions should come with documentation
+ * @module contributing
+ */
 var gulp = require('gulp');
 var gp = require('gulp-load-plugins')();
 var fs = require('fs');
@@ -27,7 +54,7 @@ gulp.task('test', [
 ]);
 
 gulp.task('docs', function() {
-    gulp.src('nodep.js')
+    gulp.src(['*.js','test/*.js'])
         .pipe(gp.concat('README.md'))
         .pipe(gp.jsdocToMarkdown({
             template: fs.readFileSync('./docs.hbs', 'utf8')
@@ -41,3 +68,6 @@ gulp.task('coverage', function()  {
 
 gulp.task('default', ['test']);
 
+gulp.task('autotest', function() {
+    gulp.watch(['nodep.js', 'test/**/*.js'], ['test']);
+});

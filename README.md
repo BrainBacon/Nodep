@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/BrainBacon/artwork/master/nodep.svg" width="264" height="300"></p>
+
 # Nodep
 [![Build Status](https://travis-ci.org/BrainBacon/Nodep.svg)](https://travis-ci.org/BrainBacon/Nodep)
 [![Coverage Status](https://coveralls.io/repos/BrainBacon/Nodep/badge.svg?branch=master&service=github)](https://coveralls.io/github/BrainBacon/Nodep?branch=master)
@@ -99,13 +101,18 @@ $p.decorator('aDependencyToOverride', function(aDependencyToOverride) {
 
 # Contributing
 ## Requirements
-[Gulp](http://gulpjs.com/)
+- [Gulp](http://gulpjs.com/)
 ```bash
 $ npm install -g gulp
 ```
 ## Running the test suite
+### Single Run:
 ```bash
 $ gulp
+```
+### Continuous testing when files are changed:
+```bash
+$ gulp autotest
 ```
 ## Generating README.md
 ```bash

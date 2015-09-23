@@ -32,28 +32,8 @@ var REGISTER_TYPE_ERROR_MESSAGE = 'Dependency is not a string';
 var PROVIDER_TYPE_ERROR_MESSAGE = 'Module does not have dependencies';
 
 /**
- * # Contributing
- * ## Requirements
- * [Gulp](http://gulpjs.com/)
- * ```bash
- * $ npm install -g gulp
- * ```
- * ## Running the test suite
- * ```bash
- * $ gulp
- * ```
- * ## Generating README.md
- * ```bash
- * $ gulp docs
- * ```
- * ## Notes
- * - jshint is part of the test suite and should be kept clean
- * - Pull requests should have high test coverage
- * - Docs should be kept up to date
- * - Additions should come with documentation
- * @module contributing
- */
-/**
+ * <p align="center"><img src="https://raw.githubusercontent.com/BrainBacon/artwork/master/nodep.svg" width="264" height="300"></p>
+ *
  * # Nodep
  * [![Build Status](https://travis-ci.org/BrainBacon/Nodep.svg)](https://travis-ci.org/BrainBacon/Nodep)
  * [![Coverage Status](https://coveralls.io/repos/BrainBacon/Nodep/badge.svg?branch=master&service=github)](https://coveralls.io/github/BrainBacon/Nodep?branch=master)
