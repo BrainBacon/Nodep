@@ -118,11 +118,16 @@ $ gulp autotest
 ```bash
 $ gulp docs
 ```
+## Generating CHANGELOG.md
+```bash
+$ gulp changelog
+```
 ## Notes
 - jshint is part of the test suite and should be kept clean
 - Pull requests should have high test coverage
 - Docs should be kept up to date
 - Additions should come with documentation
+- commit messages should follow [conventional format](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md)
 
 
 # API Reference
