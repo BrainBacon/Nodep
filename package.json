@@ -1,7 +1,7 @@
 {
   "name": "nodep",
   "version": "0.1.0",
-  "description": "A lightweight Node.js dependency injection framework",
+  "description": "Node.js dependency injection",
   "main": "nodep.js",
   "repository": {
     "type": "git",
