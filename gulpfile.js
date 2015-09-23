@@ -20,11 +20,16 @@
  * ```bash
  * $ gulp docs
  * ```
+ * ## Generating CHANGELOG.md
+ * ```bash
+ * $ gulp changelog
+ * ```
  * ## Notes
  * - jshint is part of the test suite and should be kept clean
  * - Pull requests should have high test coverage
  * - Docs should be kept up to date
  * - Additions should come with documentation
+ * - commit messages should follow [conventional format](https://github.com/ajoslin/conventional-changelog/blob/master/conventions/angular.md)
  * @module contributing
  */
 var gulp = require('gulp');
@@ -48,10 +53,20 @@ gulp.task('spec', function() {
         });
 });
 
+gulp.task('autotest', function() {
+    gulp.watch(['nodep.js', 'test/**/*.js'], ['test']);
+});
+
+
 gulp.task('test', [
     'jshint',
     'spec'
 ]);
+
+gulp.task('coverage', function()  {
+    gulp.src('coverage/**/lcov.info')
+        .pipe(gp.coveralls());
+});
 
 gulp.task('docs', function() {
     gulp.src(['*.js','test/*.js'])
@@ -61,13 +76,11 @@ gulp.task('docs', function() {
         })).pipe(gulp.dest('.'));
 });
 
-gulp.task('coverage', function()  {
-    gulp.src('coverage/**/lcov.info')
-        .pipe(gp.coveralls());
+gulp.task('changelog', function() {
+    gulp.src('CHANGELOG.md')
+        .pipe(gp.conventionalChangelog({
+            preset: 'angular'
+        })).pipe(gulp.dest('.'));
 });
 
 gulp.task('default', ['test']);
-
-gulp.task('autotest', function() {
-    gulp.watch(['nodep.js', 'test/**/*.js'], ['test']);
-});
