@@ -32,9 +32,7 @@ var REGISTER_TYPE_ERROR_MESSAGE = 'Dependency is not a string';
 var PROVIDER_TYPE_ERROR_MESSAGE = 'Module does not have dependencies';
 
 /**
- * <p align="center">
- * ![https://raw.githubusercontent.com/BrainBacon/artwork/master/nodep.svg](nodep logo)
- * </p>
+ * <p align="center"><img src="https://raw.githubusercontent.com/BrainBacon/artwork/master/nodep" width="264" height="300"></p>
  *
  * # Nodep
  * [![Build Status](https://travis-ci.org/BrainBacon/Nodep.svg)](https://travis-ci.org/BrainBacon/Nodep)
