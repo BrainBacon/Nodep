@@ -1,4 +1,4 @@
-<p align="center"><img src="https://raw.githubusercontent.com/BrainBacon/artwork/master/nodep.svg" width="264" height="300"></p>
+<p align="center"><img src="https://cdn.rawgit.com/BrainBacon/artwork/master/nodep.svg" width="264" height="300"></p>
 
 # Nodep
 [![Build Status](https://travis-ci.org/BrainBacon/Nodep.svg)](https://travis-ci.org/BrainBacon/Nodep)
