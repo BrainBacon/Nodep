@@ -19,7 +19,46 @@ $ npm install --save nodep
 # Usage
 
 
-ERROR, Cannot find module.
+## Load dependencies into nodep
+### Dependencies can be loaded as follows:
+- an array of strings of local dependency paths and npm module names
+- a single string of a local dependency path or npm module name
+- an object with the keys being the dependency names
+
+### Notes
+- Local dependencies of type function will be executed and will have arguments injected into them
+- Local dependencies of other types, e.g. Strings or Objects, will be injected as-is
+- Local dependencies are changed to camel-case names without paths
+
+### Example
+**index.js**
+```js
+var $p = require('nodep')();
+
+$p.init({
+    myVar: localVariable
+}).init([
+    'anNpmPackage',
+    './a/nested/local.dependency',
+    './a.local.dependency'
+]);
+```
+Use your dependencies like this:
+
+**a.local.dependency.js**
+```js
+module.exports = function(localDependency, myVar, anNpmPackage) {
+    localDependency.doStuff();
+    myVar.doStuff();
+    anNpmPackage();
+};
+```
+- `./a/nested/local.dependency` becomes `localDependency` is executed and injectable
+- `anNpmPackage` is loaded from `node_modules`
+- `myVar` is injectable
+- `./a.local.dependency` becomes `aLocalDependency` is executed and injectable
+
+
 ## Existing providers
 Register other instances of nodep into your project.
 
