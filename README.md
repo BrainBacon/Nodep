@@ -19,46 +19,7 @@ $ npm install --save nodep
 # Usage
 
 
-## Load dependencies into nodep
-### Dependencies can be loaded as follows:
-- an array of strings of local dependency paths and npm module names
-- a single string of a local dependency path or npm module name
-- an object with the keys being the dependency names
-
-### Notes
-- Local dependencies of type function will be executed and will have arguments injected into them
-- Local dependencies of other types, e.g. Strings or Objects, will be injected as-is
-- Local dependencies are changed to camel-case names without paths
-
-### Example
-**index.js**
-```js
-var $p = require('nodep')();
-
-$p.load({
-    myVar: localVariable
-}).load([
-    'anNpmPackage',
-    './a/nested/local.dependency',
-    './a.local.dependency'
-]);
-```
-Use your dependencies like this:
-
-**a.local.dependency.js**
-```js
-module.exports = function(localDependency, myVar, anNpmPackage) {
-    localDependency.doStuff();
-    myVar.doStuff();
-    anNpmPackage();
-};
-```
-- `./a/nested/local.dependency` becomes `localDependency` is executed and injectable
-- `anNpmPackage` is loaded from `node_modules`
-- `myVar` is injectable
-- `./a.local.dependency` becomes `aLocalDependency` is executed and injectable
-
-
+ERROR, Cannot find module.
 ## Existing providers
 Register other instances of nodep into your project.
 
@@ -155,13 +116,16 @@ var $p = require('nodep')();
   * [.PATH_REPLACE_RESULT](#module_nodep..$p.PATH_REPLACE_RESULT) : <code>String</code>
   * [.REMOVE_COMMENTS_REGEXP](#module_nodep..$p.REMOVE_COMMENTS_REGEXP) : <code>RegExp</code>
   * [.REGISTER_TYPE_ERROR_MESSAGE](#module_nodep..$p.REGISTER_TYPE_ERROR_MESSAGE) : <code>String</code>
+  * [.CIRCULAR_DEPENDENCY_ERROR_MESSAGE](#module_nodep..$p.CIRCULAR_DEPENDENCY_ERROR_MESSAGE) : <code>String</code>
   * [.PROVIDER_TYPE_ERROR_MESSAGE](#module_nodep..$p.PROVIDER_TYPE_ERROR_MESSAGE) : <code>String</code>
   * [.camelCase(match, $1, offset)](#module_nodep..$p.camelCase) ⇒ <code>String</code>
   * [.name(path)](#module_nodep..$p.name) ⇒ <code>String</code>
   * [.args(fn)](#module_nodep..$p.args)
+  * [.applyArgs(name, args)](#module_nodep..$p.applyArgs)
   * [.decorator(name, dependency, [skipInject])](#module_nodep..$p.decorator) ⇒ <code>Object</code>
-  * [.register(path)](#module_nodep..$p.register)
-  * [.load(paths)](#module_nodep..$p.load) ⇒ <code>Object</code>
+  * [.easyRegister(path)](#module_nodep..$p.easyRegister) ⇒ <code>Boolean</code>
+  * [.register(paths)](#module_nodep..$p.register)
+  * [.init(paths)](#module_nodep..$p.init) ⇒ <code>Object</code>
   * [.provider(instances)](#module_nodep..$p.provider) ⇒ <code>Object</code>
   * [.inject(name)](#module_nodep..$p.inject) ⇒ <code>?</code>
 
@@ -215,6 +179,11 @@ Expression to remove comments when parsing arguments for a dependency
 Error message to send when trying to register a non-string type
 
 **Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
+<a name="module_nodep..$p.CIRCULAR_DEPENDENCY_ERROR_MESSAGE"></a>
+### $p.CIRCULAR_DEPENDENCY_ERROR_MESSAGE : <code>String</code>
+Error message to send when a circular reference is detected in the dependency tree
+
+**Kind**: static constant of <code>[$p](#module_nodep..$p)</code>  
 <a name="module_nodep..$p.PROVIDER_TYPE_ERROR_MESSAGE"></a>
 ### $p.PROVIDER_TYPE_ERROR_MESSAGE : <code>String</code>
 Error message to send when trying to register a provider without dependencies
@@ -254,6 +223,17 @@ Will extract the order and name of injectable arguments in a given function
 | --- | --- | --- |
 | fn | <code>function</code> | the function to extract injection arguments from |
 
+<a name="module_nodep..$p.applyArgs"></a>
+### $p.applyArgs(name, args)
+Function to apply args to a new dependency and register it
+
+**Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| name | <code>String</code> | the name of the new dependency to register |
+| args | <code>Array.&lt;String&gt;</code> | the names of args to apply to the new dependeency |
+
 <a name="module_nodep..$p.decorator"></a>
 ### $p.decorator(name, dependency, [skipInject]) ⇒ <code>Object</code>
 Main dependency injection function
@@ -282,18 +262,29 @@ Dependency Handling:
 | dependency | <code>?</code> | a value to assign to this dependency |
 | [skipInject] | <code>Boolean</code> | inject into a provided dependency of type function unless true |
 
+<a name="module_nodep..$p.easyRegister"></a>
+### $p.easyRegister(path) ⇒ <code>Boolean</code>
+Easy dependency test, will register simple dependencies
+
+**Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
+**Returns**: <code>Boolean</code> - true if register was successful  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| path | <code>String</code> | the name or filepath of a dependency to register to the provider |
+
 <a name="module_nodep..$p.register"></a>
-### $p.register(path)
+### $p.register(paths)
 Default registration function in front of `$p.decorator`
 
 **Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| path | <code>String</code> | the name or filepath of a dependency to register to the provider |
+| paths | <code>String</code> &#124; <code>Array.&lt;String&gt;</code> | the name or filepath of a dependency to register to the provider or an array of the former |
 
-<a name="module_nodep..$p.load"></a>
-### $p.load(paths) ⇒ <code>Object</code>
+<a name="module_nodep..$p.init"></a>
+### $p.init(paths) ⇒ <code>Object</code>
 Load one or more dependencies into the provider
 Loading Mechanism:
  - All strings in an array loaded into $p will be initialized according to `$p.register`
