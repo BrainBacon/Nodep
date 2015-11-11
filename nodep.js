@@ -27,8 +27,10 @@
 
 var nodep = require('./package');
 var _ = require('lodash');
+var glob = require('glob');
 
 var REGISTER_TYPE_ERROR_MESSAGE = 'Dependency is not a string';
+var CIRCULAR_DEPENDENCY_ERROR_MESSAGE = 'Circular dependency detected';
 var PROVIDER_TYPE_ERROR_MESSAGE = 'Module does not have dependencies';
 
 /**
@@ -170,6 +172,23 @@ module.exports = function() {
         },
 
         /**
+         * Function to apply args to a new dependency and register it
+         * @function
+         * @param {String} name the name of the new dependency to register
+         * @param {Array<String>} args the names of args to apply to the new dependeency
+         */
+        applyArgs: function(name, dependency, args) {
+            this.dependencies[name] = dependency.apply(undefined, _.map(args, function(arg) {
+                var dep = this.dependencies[arg];
+                if(_.isUndefined(dep)) {
+                    dep = module.parent.require(arg);
+                    this.dependencies[arg] = dep;
+                }
+                return dep;
+            }, this));
+        },
+
+        /**
          * ## Override existing dependencies
          * ```js
          * // You can inject the old instance of this dependency
@@ -208,16 +227,8 @@ module.exports = function() {
                 return;
             }
             var args = this.args(dependency);
-            var self = this;
             // TODO determine what to make of the "this arg" value. Perhaps set it as $p?
-            this.dependencies[name] = dependency.apply(undefined, _.map(args, function(arg) {
-                var dep = self.dependencies[arg];
-                if(_.isUndefined(dep)) {
-                    dep = module.parent.require(arg);
-                    self.dependencies[arg] = dep;
-                }
-                return dep;
-            }));
+            this.applyArgs(name, dependency, args);
             return this;
         },
 
@@ -229,24 +240,130 @@ module.exports = function() {
         REGISTER_TYPE_ERROR_MESSAGE: REGISTER_TYPE_ERROR_MESSAGE,
 
         /**
-         * Default registration function in front of `$p.decorator`
+         * Easy dependency test, will register simple dependencies
          * @function
          * @param {String} path the name or filepath of a dependency to register to the provider
+         * @returns {Boolean} true if register was successful
          */
-        register: function(path) {
+        easyRegister: function(path, name) {
             if(!_.isString(path)) {
                 throw new TypeError(REGISTER_TYPE_ERROR_MESSAGE);
             }
-            var name = this.name(path);
+            name = name || this.name(path);
             if(!_.isUndefined(this.dependencies[name])) {
-                return;
+                return true;
             }
             if(!_.includes(path, '/')) {
                 this.dependencies[path] = module.parent.require(path);
+                return true;
+            }
+            return false;
+        },
+
+        /**
+         * Error message to send when a circular reference is detected in the dependency tree
+         * @constant
+         * @type {String}
+         */
+        CIRCULAR_DEPENDENCY_ERROR_MESSAGE: CIRCULAR_DEPENDENCY_ERROR_MESSAGE,
+
+        /**
+         * Default registration function in front of `$p.decorator`
+         * @function
+         * @param {String|Array<String>} paths the name or filepath of a dependency to register to the provider or an array of the former
+         */
+        register: function(paths) {
+            if(_.isArray(paths)) {
+                var index = {};
+                _.forEach(paths, function(path) {
+                    if(this.easyRegister(path)) {
+                        return;
+                    }
+                    var name = this.name(path);
+                    var dep = module.parent.require(path);
+                    if(!_.isFunction(dep)) {
+                        this.decorator(name, dep);
+                        return;
+                    }
+                    var args = this.args(dep);
+                    if(args.length < 1) {
+                        this.register(path);
+                        return;
+                    }
+                    index[name] = module.parent.require(path);
+                    index[name].args = args;
+                }, this);
+                // TODO continue here
+                var checkDep = function(name, stack) {
+                    if(!_.isUndefined(this.dependencies[name])) {
+                        return;
+                    }
+                    if(_.includes(stack, name)) {
+                        throw new Error(CIRCULAR_DEPENDENCY_ERROR_MESSAGE);
+                    }
+                    if(_.every(_.map(index[name].args, function(arg) {
+                        return !!this.dependencies[arg];
+                    }, this))) {
+                        this.applyArgs(name, index[name], index[name].args);
+                    }
+                    var childStack = _.cloneDeep(stack);
+                    childStack.push(name);
+                    _.forEach(index[name].args, function(arg) {
+                        checkDep.apply(this, [arg, _.cloneDeep(childStack)]);
+                    }, this);
+                    checkDep.apply(this, [name, stack]);
+                };
+                _.forEach(index, function(dep, name) {
+                    checkDep.apply(this, [name, []]);
+                }, this);
                 return;
             }
-            var dependency = module.parent.require(path);
-            this.decorator(name, dependency);
+            var name = this.name(paths);
+            if(this.easyRegister(paths, name)) {
+                return;
+            }
+            this.decorator(name, module.parent.require(paths));
+        },
+
+        /**
+         * ## Glob pattern matching for directories
+         * ### $p.init also supports glob syntax for loading multiple files from a directory or directory tree
+         * - Any file without a `.js` extension will be ignored
+         * - [glob docs and patterns](https://github.com/isaacs/node-glob)
+         *
+         * ### Example
+         * **index.js**
+         * ```js
+         * var $p = require('nodep')();
+         *
+         * $p.init('src/*').init([
+         *     'anNpmPackage',
+         *     './a/nested/local.dependency',
+         *     'glob/patterns/*'
+         * ]);
+         * ```
+         * @module glob
+         */
+        /**
+         * Function to normalize glob type paths into file paths omitting any non-js files
+         * @function
+         * @param {Array<String>} paths file paths and globbed paths
+         * @returns {Array<String>} an array with globbed paths normalized and merged with regular paths
+         */
+        resolveFiles: function(paths) {
+            return _.flattenDeep(_.map(paths, function(path) {
+                if(_.isString(path) && glob.hasMagic(path)) {
+                   return _.map(_.filter(glob.sync(path, {
+                       nodir: true,
+                       cwd: module.parent.paths[0].substring(0, module.parent.paths[0].lastIndexOf('/'))
+                    }), function(file) {
+                       return file.indexOf('.js') === file.length - 3;
+                    }, this), function(file) {
+                        return './' + file;
+                    }, this);
+                }
+                return path;
+            }, this));
         },
 
         /**
@@ -266,9 +383,9 @@ module.exports = function() {
          * ```js
          * var $p = require('nodep')();
          *
-         * $p.load({
+         * $p.init({
          *     myVar: localVariable
-         * }).load([
+         * }).init([
          *     'anNpmPackage',
          *     './a/nested/local.dependency',
          *     './a.local.dependency'
@@ -288,7 +405,7 @@ module.exports = function() {
          * - `anNpmPackage` is loaded from `node_modules`
          * - `myVar` is injectable
          * - `./a.local.dependency` becomes `aLocalDependency` is executed and injectable
-         * @module load
+         * @module init
          */
         /**
          * Load one or more dependencies into the provider
@@ -300,18 +417,17 @@ module.exports = function() {
          * @param {(Array<String>|Object|String)} paths a list, key/value store, or single dependency
          * @returns {Object} a reference to this provider
          */
-        load: function(paths) {
-            var self = this;
+        init: function(paths) {
             if(_.isArray(paths)) {
-                _.forEach(paths, function(path) {
-                    self.register(path);
-                });
+                this.register(this.resolveFiles(paths));
             } else if(_.isObject(paths)) {
                 _.forEach(paths, function(path, name) {
-                    if(_.isUndefined(self.dependencies[name])) {
-                        self.dependencies[name] = path;
+                    if(_.isUndefined(this.dependencies[name])) {
+                        this.dependencies[name] = path;
                     }
-                });
+                }, this);
+            } else if(_.isString(paths) && glob.hasMagic(paths)) {
+                    this.init([paths]);
             } else {
                 this.register(paths);
             }
@@ -354,7 +470,6 @@ module.exports = function() {
          * @returns {Object} a reference to this provider
          */
         provider: function(instances) {
-            var self = this;
             var provide = function(instance) {
                     if(_.isString(instance)) {
                         instance = module.parent.require(instance);
@@ -365,12 +480,12 @@ module.exports = function() {
                     if(!instance || !instance.dependencies) {
                         throw new TypeError(PROVIDER_TYPE_ERROR_MESSAGE);
                     }
-                    self.load(instance.dependencies);
+                    this.init(instance.dependencies);
             };
             if(_.isArray(instances)) {
-                _.forEach(instances, provide);
+                _.forEach(instances, provide, this);
             } else {
-                provide(instances);
+                provide.apply(this, [instances]);
             }
             return this;
         },

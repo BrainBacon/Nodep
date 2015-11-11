@@ -3,7 +3,7 @@
 var $p = require('../../nodep')();
 
 module.exports = function() {
-    $p.load({
+    $p.init({
         foo: true
     });
     return $p;

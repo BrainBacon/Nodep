@@ -1,6 +1,7 @@
 'use strict';
 
 var assert = require('assert');
+var fs = require('fs');
 var _ = require('lodash');
 
 var nodep = require('../nodep');
@@ -136,6 +137,28 @@ describe('$p.decorator', function() {
     });
 });
 
+describe('$p.easyRegister', function() {
+    beforeEach(reset);
+
+    it('should reject a non-string type', function() {
+        assert.throws($p.easyRegister, TypeError, $p.REGISTER_TYPE_ERROR_MESSAGE);
+    });
+
+    it('should find a dependency', function() {
+        $p.dependencies.bar = true;
+        assert.strictEqual($p.easyRegister('./foo', 'bar'), true);
+    });
+
+    it('should register npm dependency', function() {
+        $p.easyRegister('lodash');
+        assert.equal($p.dependencies.lodash, _);
+    });
+
+    it('should not register path', function() {
+        assert.strictEqual($p.easyRegister('./foo'), false);
+    });
+});
+
 describe('$p.register', function() {
     beforeEach(reset);
 
@@ -202,18 +225,60 @@ describe('$p.register', function() {
         $p.register('./mock/args.commented');
         assert.equal($p.dependencies.argsCommented, 69300);
     });
+
+    it('should inject dependency array', function() {
+        $p.register([
+            './mock/no.args',
+            './mock/no.args.commented',
+            './mock/arg',
+            './mock/arg.commented',
+            './mock/args',
+            './mock/args.commented'
+        ]);
+        assert.equal($p.dependencies.argsCommented, 69300);
+    });
+
+    it('should inject dependencies in reverse', function() {
+        $p.register([
+            './mock/args.commented',
+            './mock/args',
+            './mock/arg.commented',
+            './mock/arg',
+            './mock/no.args.commented',
+            './mock/no.args',
+        ]);
+        assert.equal($p.dependencies.argsCommented, 69300);
+    });
+
+    it('should detect circular dependency', function() {
+        assert.throws(function() {
+            $p.register(['./mock/circular']);
+        }, Error, $p.CIRCULAR_DEPENDENCY_ERROR_MESSAGE);
+    });
 });
 
-describe('$p.load', function() {
+describe('$p.resolveFiles', function() {
+    beforeEach(reset);
+
+    it('should resolve file names from directory', function() {
+        var actual = $p.resolveFiles(['mock/*']);
+        var expected = _.map(fs.readdirSync('./test/mock'), function(path) {
+            return './mock/' + path;
+        });
+        assert.strictEqual(_.difference(actual, expected).length, 0);
+    });
+});
+
+describe('$p.init', function() {
     beforeEach(reset);
 
     it('should register dependency', function() {
-        $p.load('./mock/no.args');
+        $p.init('./mock/no.args');
         assert.equal($p.dependencies.noArgs, 1);
     });
 
     it('should register dependency array', function() {
-        $p.load([
+        $p.init([
             './mock/no.args',
             './mock/no.args.commented'
         ]);
@@ -222,35 +287,47 @@ describe('$p.load', function() {
     });
 
     it('should register dependency object', function() {
-        $p.load({
+        $p.init({
             foo: 'bar'
         });
         assert.equal($p.dependencies.foo, 'bar');
     });
 
     it('should not overwrite dependency from array', function() {
-        $p.load(['./mock/random']);
+        $p.init(['./mock/random']);
         var first = $p.dependencies.random;
-        $p.load(['./mock/random']);
+        $p.init(['./mock/random']);
         assert.equal($p.dependencies.random, first);
     });
 
     it('should not overwrite dependency from object', function() {
-        $p.load({
+        $p.init({
             foo: 'bar'
         });
-        $p.load({
+        $p.init({
             foo: 'baz'
         });
         assert.equal($p.dependencies.foo, 'bar');
     });
 
     it('should return $p', function() {
-        assert.equal($p.load({
+        assert.equal($p.init({
             foo: 'bar'
-        }).load([
+        }).init([
             './mock/num'
         ]), $p);
+    });
+
+    it('should call resolve files', function() {
+        var pattern = 'glob/*';
+        var called = false;
+        $p.resolveFiles = function(paths) {
+            assert.deepStrictEqual(paths, [pattern]);
+            called = true;
+        };
+        $p.register = function() {};
+        $p.init(pattern);
+        assert.equal(called, true);
     });
 });
 
@@ -258,7 +335,7 @@ describe('$p.provider', function() {
     beforeEach(reset);
 
     it('should register other provider object', function() {
-        $p.provider(nodep().load({
+        $p.provider(nodep().init({
             foo: true
         }));
         assert.equal($p.dependencies.foo, true);
@@ -266,7 +343,7 @@ describe('$p.provider', function() {
 
     it('should register other provider function', function() {
         $p.provider(function() {
-            return nodep().load({
+            return nodep().init({
                 foo: true
             });
         });
@@ -275,10 +352,10 @@ describe('$p.provider', function() {
 
     it('should register other provider array', function() {
         $p.provider([
-            nodep().load({
+            nodep().init({
                 foo: true
             }),
-            nodep().load({
+            nodep().init({
                 bar: true
             })
         ]);

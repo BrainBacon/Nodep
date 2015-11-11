@@ -2,7 +2,7 @@
 
 var $p = require('../../nodep')();
 
-$p.load({
+$p.init({
     foo: true
 });
 
