@@ -311,7 +311,7 @@ module.exports = function() {
                     _.forEach(index[name].args, function(arg) {
                         checkDep.apply(this, [arg, _.cloneDeep(childStack)]);
                     }, this);
-                    checkDep.apply(this, [name, stack]);
+                    this.applyArgs(name, index[name], index[name].args);
                 };
                 _.forEach(index, function(dep, name) {
                     checkDep.apply(this, [name, []]);
