@@ -59,6 +59,24 @@ module.exports = function(localDependency, myVar, anNpmPackage) {
 - `./a.local.dependency` becomes `aLocalDependency` is executed and injectable
 
 
+## Glob pattern matching for directories
+### $p.init also supports glob syntax for loading multiple files from a directory or directory tree
+- Any file without a `.js` extension will be ignored
+- [glob docs and patterns](https://github.com/isaacs/node-glob)
+
+### Example
+**index.js**
+```js
+var $p = require('nodep')();
+
+$p.init('src/*').init([
+    'anNpmPackage',
+    './a/nested/local.dependency',
+    'glob/patterns/*'
+]);
+```
+
+
 ## Existing providers
 Register other instances of nodep into your project.
 
@@ -164,6 +182,7 @@ var $p = require('nodep')();
   * [.decorator(name, dependency, [skipInject])](#module_nodep..$p.decorator) ⇒ <code>Object</code>
   * [.easyRegister(path)](#module_nodep..$p.easyRegister) ⇒ <code>Boolean</code>
   * [.register(paths)](#module_nodep..$p.register)
+  * [.resolveFiles(paths)](#module_nodep..$p.resolveFiles) ⇒ <code>Array.&lt;String&gt;</code>
   * [.init(paths)](#module_nodep..$p.init) ⇒ <code>Object</code>
   * [.provider(instances)](#module_nodep..$p.provider) ⇒ <code>Object</code>
   * [.inject(name)](#module_nodep..$p.inject) ⇒ <code>?</code>
@@ -321,6 +340,17 @@ Default registration function in front of `$p.decorator`
 | Param | Type | Description |
 | --- | --- | --- |
 | paths | <code>String</code> &#124; <code>Array.&lt;String&gt;</code> | the name or filepath of a dependency to register to the provider or an array of the former |
+
+<a name="module_nodep..$p.resolveFiles"></a>
+### $p.resolveFiles(paths) ⇒ <code>Array.&lt;String&gt;</code>
+Function to normalize glob type paths into file paths omitting any non-js files
+
+**Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
+**Returns**: <code>Array.&lt;String&gt;</code> - an array with globbed paths normalized and merged with regular paths  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| paths | <code>Array.&lt;String&gt;</code> | file paths and globbed paths |
 
 <a name="module_nodep..$p.init"></a>
 ### $p.init(paths) ⇒ <code>Object</code>

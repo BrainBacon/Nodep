@@ -27,6 +27,7 @@
 
 var nodep = require('./package');
 var _ = require('lodash');
+var glob = require('glob');
 
 var REGISTER_TYPE_ERROR_MESSAGE = 'Dependency is not a string';
 var CIRCULAR_DEPENDENCY_ERROR_MESSAGE = 'Circular dependency detected';
@@ -325,6 +326,47 @@ module.exports = function() {
         },
 
         /**
+         * ## Glob pattern matching for directories
+         * ### $p.init also supports glob syntax for loading multiple files from a directory or directory tree
+         * - Any file without a `.js` extension will be ignored
+         * - [glob docs and patterns](https://github.com/isaacs/node-glob)
+         *
+         * ### Example
+         * **index.js**
+         * ```js
+         * var $p = require('nodep')();
+         *
+         * $p.init('src/*').init([
+         *     'anNpmPackage',
+         *     './a/nested/local.dependency',
+         *     'glob/patterns/*'
+         * ]);
+         * ```
+         * @module glob
+         */
+        /**
+         * Function to normalize glob type paths into file paths omitting any non-js files
+         * @function
+         * @param {Array<String>} paths file paths and globbed paths
+         * @returns {Array<String>} an array with globbed paths normalized and merged with regular paths
+         */
+        resolveFiles: function(paths) {
+            return _.flattenDeep(_.map(paths, function(path) {
+                if(_.isString(path) && glob.hasMagic(path)) {
+                   return _.map(_.filter(glob.sync(path, {
+                       nodir: true,
+                       cwd: module.parent.paths[0].substring(0, module.parent.paths[0].lastIndexOf('/'))
+                    }), function(file) {
+                       return file.indexOf('.js') === file.length - 3;
+                    }, this), function(file) {
+                        return './' + file;
+                    }, this);
+                }
+                return path;
+            }, this));
+        },
+
+        /**
          * ## Load dependencies into nodep
          * ### Dependencies can be loaded as follows:
          * - an array of strings of local dependency paths and npm module names
@@ -377,13 +419,15 @@ module.exports = function() {
          */
         init: function(paths) {
             if(_.isArray(paths)) {
-                this.register(paths);
+                this.register(this.resolveFiles(paths));
             } else if(_.isObject(paths)) {
                 _.forEach(paths, function(path, name) {
                     if(_.isUndefined(this.dependencies[name])) {
                         this.dependencies[name] = path;
                     }
                 }, this);
+            } else if(_.isString(paths) && glob.hasMagic(paths)) {
+                    this.init([paths]);
             } else {
                 this.register(paths);
             }

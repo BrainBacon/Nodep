@@ -1,6 +1,7 @@
 'use strict';
 
 var assert = require('assert');
+var fs = require('fs');
 var _ = require('lodash');
 
 var nodep = require('../nodep');
@@ -256,6 +257,18 @@ describe('$p.register', function() {
     });
 });
 
+describe('$p.resolveFiles', function() {
+    beforeEach(reset);
+
+    it('should resolve file names from directory', function() {
+        var actual = $p.resolveFiles(['mock/*']);
+        var expected = _.map(fs.readdirSync('./test/mock'), function(path) {
+            return './mock/' + path;
+        });
+        assert.strictEqual(_.difference(actual, expected).length, 0);
+    });
+});
+
 describe('$p.init', function() {
     beforeEach(reset);
 
@@ -303,6 +316,18 @@ describe('$p.init', function() {
         }).init([
             './mock/num'
         ]), $p);
+    });
+
+    it('should call resolve files', function() {
+        var pattern = 'glob/*';
+        var called = false;
+        $p.resolveFiles = function(paths) {
+            assert.deepStrictEqual(paths, [pattern]);
+            called = true;
+        };
+        $p.register = function() {};
+        $p.init(pattern);
+        assert.equal(called, true);
     });
 });
 
