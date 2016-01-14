@@ -176,16 +176,22 @@ module.exports = function() {
          * @function
          * @param {String} name the name of the new dependency to register
          * @param {Array<String>} args the names of args to apply to the new dependeency
+         * @param {Boolean} overwrite overwrite the current dependency
          */
-        applyArgs: function(name, dependency, args) {
-            this.dependencies[name] = dependency.apply(undefined, _.map(args, function(arg) {
-                var dep = this.dependencies[arg];
-                if(_.isUndefined(dep)) {
-                    dep = module.parent.require(arg);
-                    this.dependencies[arg] = dep;
+        applyArgs: function(name, dependency, args, overwrite) {
+            if(overwrite || !this.dependencies[name]) {
+                this.dependencies[name] = dependency.apply(undefined, _.map(args, function(arg) {
+                    var dep = this.dependencies[arg];
+                    if(_.isUndefined(dep)) {
+                        dep = module.parent.require(arg);
+                        this.dependencies[arg] = dep;
+                    }
+                    return dep;
+                }, this));
+                if(this.dependencies[name] === undefined) {
+                    this.dependencies[name] = dependency;
                 }
-                return dep;
-            }, this));
+            }
         },
 
         /**
@@ -228,7 +234,7 @@ module.exports = function() {
             }
             var args = this.args(dependency);
             // TODO determine what to make of the "this arg" value. Perhaps set it as $p?
-            this.applyArgs(name, dependency, args);
+            this.applyArgs(name, dependency, args, true);
             return this;
         },
 

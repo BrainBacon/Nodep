@@ -178,7 +178,7 @@ var $p = require('nodep')();
   * [.camelCase(match, $1, offset)](#module_nodep..$p.camelCase) ⇒ <code>String</code>
   * [.name(path)](#module_nodep..$p.name) ⇒ <code>String</code>
   * [.args(fn)](#module_nodep..$p.args)
-  * [.applyArgs(name, args)](#module_nodep..$p.applyArgs)
+  * [.applyArgs(name, args, overwrite)](#module_nodep..$p.applyArgs)
   * [.decorator(name, dependency, [skipInject])](#module_nodep..$p.decorator) ⇒ <code>Object</code>
   * [.easyRegister(path)](#module_nodep..$p.easyRegister) ⇒ <code>Boolean</code>
   * [.register(paths)](#module_nodep..$p.register)
@@ -282,7 +282,7 @@ Will extract the order and name of injectable arguments in a given function
 | fn | <code>function</code> | the function to extract injection arguments from |
 
 <a name="module_nodep..$p.applyArgs"></a>
-### $p.applyArgs(name, args)
+### $p.applyArgs(name, args, overwrite)
 Function to apply args to a new dependency and register it
 
 **Kind**: static method of <code>[$p](#module_nodep..$p)</code>  
@@ -291,6 +291,7 @@ Function to apply args to a new dependency and register it
 | --- | --- | --- |
 | name | <code>String</code> | the name of the new dependency to register |
 | args | <code>Array.&lt;String&gt;</code> | the names of args to apply to the new dependeency |
+| overwrite | <code>Boolean</code> | overwrite the current dependency |
 
 <a name="module_nodep..$p.decorator"></a>
 ### $p.decorator(name, dependency, [skipInject]) ⇒ <code>Object</code>

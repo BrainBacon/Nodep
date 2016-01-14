@@ -310,6 +310,11 @@ describe('$p.init', function() {
         assert.equal($p.dependencies.foo, 'bar');
     });
 
+    it('should register undefined return dependency as function', function() {
+        $p.init('./mock/no.return');
+        assert.equal($p.dependencies.noReturn, require('./mock/no.return'));
+    });
+
     it('should return $p', function() {
         assert.equal($p.init({
             foo: 'bar'
