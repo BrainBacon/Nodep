@@ -359,14 +359,23 @@ module.exports = function() {
         resolveFiles: function(paths) {
             return _.flattenDeep(_.map(paths, function(path) {
                 if(_.isString(path) && glob.hasMagic(path)) {
-                   return _.map(_.filter(glob.sync(path, {
-                       nodir: true,
-                       cwd: module.parent.paths[0].substring(0, module.parent.paths[0].lastIndexOf('/'))
-                    }), function(file) {
-                       return file.indexOf('.js') === file.length - 3;
-                    }, this), function(file) {
-                        return './' + file;
-                    }, this);
+                    return _.map(
+                        _.filter(
+                           glob.sync(path, {
+                                nodir: true,
+                                cwd: module.parent.paths[0].substring(0, module.parent.paths[0].lastIndexOf('/'))
+                            }), function(file) {
+                                return file.indexOf('.js') === file.length - 3;
+                            },
+                            this
+                        ), function(file) {
+                            return file.indexOf('/') === 1
+                                    || file.indexOf('./') === 1
+                                    || file.indexOf('../') === 1
+                                ? file
+                                : './' + file;
+                        }, this
+                    );
                 }
                 return path;
             }, this));
