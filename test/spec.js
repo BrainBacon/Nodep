@@ -271,11 +271,9 @@ describe('$p.resolveFiles', function() {
 
     it('should resolve absolute file names from directory', function() {
         var absoluteDir = path.resolve('.');
-        console.log(absoluteDir);
         var actual = $p.resolveFiles([path.join(absoluteDir, 'mock/*')]);
         var expected = _.map(fs.readdirSync('./test/mock'), function(file) {
             file = path.join(absoluteDir, 'test/mock', file);
-            console.log(file);
             return file;
         });
         assert.strictEqual(_.difference(actual, expected).length, 0);

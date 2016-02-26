@@ -369,9 +369,9 @@ module.exports = function() {
                             },
                             this
                         ), function(file) {
-                            return file.indexOf('/') === 1
-                                    || file.indexOf('./') === 1
-                                    || file.indexOf('../') === 1
+                            return file.indexOf('/') === 0
+                                    || file.indexOf('./') === 0
+                                    || file.indexOf('../') === 0
                                 ? file
                                 : './' + file;
                         }, this
