@@ -1,3 +1,13 @@
+<a name="0.2.2"></a>
+## [0.2.2](https://github.com/BrainBacon/Nodep/compare/0.2.1...v0.2.2) (2016-02-26)
+
+
+### Bug Fixes
+
+* **resolveFiles:** allow for absolute and relative paths ([af10b78](https://github.com/BrainBacon/Nodep/commit/af10b78))
+
+
+
 <a name="0.2.1"></a>
 ## [0.2.1](https://github.com/BrainBacon/Nodep/compare/0.2.0...v0.2.1) (2016-01-14)
 
